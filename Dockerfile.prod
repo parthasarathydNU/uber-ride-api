@@ -1,0 +1,15 @@
+# Dockerfile.prod
+FROM python:3.9-slim
+
+WORKDIR /code
+
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./app /code/app
+
+# Create a non-root user and switch to it
+RUN adduser --system --group app
+USER app
+
+CMD ["gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
