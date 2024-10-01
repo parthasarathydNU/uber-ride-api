@@ -1,30 +1,31 @@
-from typing import Union, List
-from fastapi import FastAPI
-from app.api.locations import router as locations_router
-from app.utils.location_generator import generate_predefined_locations
+# app/main.py
+
+from fastapi import FastAPI, Depends
+from app.api import locations
 from app.services.location_service import LocationService
+from app.utils.location_generator import generate_predefined_locations
+from typing import List
+from app.models.location import Location
 
 app = FastAPI()
 
-# Initialize locations
-locations_service = LocationService(generate_predefined_locations())
-
-# Store the service instance in the app state
-app.state.locations_service = locations_service
-
-
-# Include the locations router
-app.include_router(locations_router, prefix="/api/v1", tags=["locations"])
+def get_location_service() -> LocationService:
+    initial_locations: List[Location] = generate_predefined_locations()
+    return LocationService(initial_locations)
 
 @app.on_event("startup")
 async def startup_event():
-    print("The application is starting up...")
-    print(f"Initialized with {len(app.state.locations_service.get_all_locations())} locations.")
+    app.state.location_service = get_location_service()
 
-@app.get("/")
-def health_check():
-    return {"Hello": "World"}
+def get_locations_service() -> LocationService:
+    return app.state.location_service
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    print("The application is shutting down...")
+# Include routers
+app.include_router(locations.router, prefix="/api/v1", tags=["locations"])
+
+# Override for testing
+def override_get_location_service() -> LocationService:
+    return LocationService(initial_locations=[])  # Empty list for tests
+
+# This will be used in tests to override the dependency
+app.dependency_overrides[get_locations_service] = override_get_location_service
