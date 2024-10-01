@@ -6,6 +6,8 @@
 
 This project is an API for simulating an Uber-like ride-hailing service. It provides endpoints for managing various aspects of the system, including locations, drivers, passengers, and rides.
 
+![High Level Design](./Docs/Diagrams/uber-high-level-design.svg)
+
 ## Features
 
 - **Locations API**: Manage pickup and drop-off locations
