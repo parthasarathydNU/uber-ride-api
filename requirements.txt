@@ -4,3 +4,4 @@ uvicorn>=0.27.0,<0.28.0
 gunicorn>=21.2.0,<22.0.0
 pytest
 httpx
+geopy>=2.4.0
