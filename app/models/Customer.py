@@ -1,6 +1,9 @@
+from uuid import uuid4
+
+
 class Customer:
-    def __init__(self, custId: int, custName: str, from_location: str, to_location: str):
-        self.custId = custId
+    def __init__(self, custName: str, from_location: str, to_location: str):
+        self.custId = str(uuid4())
         self.custName= custName
         self.from_location = from_location
         self.to_location = to_location

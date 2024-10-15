@@ -1,10 +1,11 @@
 from typing import Tuple
+from uuid import uuid4
 
 
-class DriverU:
-     def __init__(self, driverName: str, driverId: int, isAvailable: bool, driverLocation: Tuple[float, float]):
+class Driver:
+     def __init__(self, driverName: str, isAvailable: bool, driverLocation: Tuple[float, float]):
          self.driverName = driverName
-         self.driverId = driverId
+         self.driverId = str(uuid4())
          self.isAvailable = isAvailable
          self.driverLocation = driverLocation
 

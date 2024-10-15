@@ -5,3 +5,4 @@ gunicorn>=21.2.0,<22.0.0
 pytest
 httpx
 geopy>=2.4.0
+rtree>=1.2.0
