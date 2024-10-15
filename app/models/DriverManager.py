@@ -1,24 +1,33 @@
-from typing import Tuple
+from uuid import uuid4
 
+from rtree import index
 from geopy.distance import geodesic
+from typing import Tuple, Dict
 
-from app.models.DriverU import DriverU
+from app.models.Driver import Driver
 
 
 class DriverManager:
     def __init__(self):
-        self.driverMap: dict[int, DriverU] = {}
+        self.drivers: Dict[str, Driver] = {}
+        self.rtree_index = index.Index()
+        self.id_counter = 0
 
-    def addDriver(self, driverId:int, driverName: str, driverLocation: Tuple[float, float], isAvailable: bool):
-        self.driverMap[driverId] = DriverU(driverName, driverId, isAvailable, driverLocation )
+    def addDriver(self, driver: Driver):
+        self.drivers[driver.driverId] = driver
+        self.id_counter += 1
+        self.rtree_index.insert(self.id_counter, (*driver.driverLocation, *driver.driverLocation), obj=driver.driverId)
 
-    def getDriver(self, driverId: int) -> DriverU:
-        return self.driverMap[driverId]
+    def updateDriverAvailability(self, driverId: str, isAvailable: bool):
+        if driverId in self.drivers:
+            self.drivers[driverId].isAvailable = isAvailable
 
-    def getClosestDriver(self, address: Tuple[float, float]) -> DriverU :
-        available_drivers_nearby = [driver for driver in self.driverMap.values() if driver.isAvailable]
-        if len(available_drivers_nearby) == 0:
+    def getClosestDriver(self, address: Tuple[float, float]) -> Driver:
+        nearest_ids = list(self.rtree_index.nearest((*address, *address), 2, objects="raw"))
+        available_drivers = [self.drivers[driverId] for driverId in nearest_ids if
+                             self.drivers[driverId].isAvailable]
+
+        if not available_drivers:
             raise Exception("No drivers are nearby right now. Please try again after some time")
-        driver_distance = lambda driver: geodesic(address, driver.getDriverLocation()).mi
-        available_driver = min(available_drivers_nearby, key = driver_distance )
-        return available_driver
+
+        return min(available_drivers, key=lambda d: geodesic(address, d.getDriverLocation()).miles)
