@@ -10,5 +10,12 @@ from app.dependencies import get_location_service
 
 app = FastAPI()
 
+
+
 # Include routers
 app.include_router(locations.router, prefix="/api/v1", tags=["locations"])
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
