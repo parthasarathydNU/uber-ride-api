@@ -1,9 +1,9 @@
 # app/api/locations.py
-from random import randint
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import List
 from uuid import UUID
+
 from app.services.location_service import LocationService
 from app.models.request_models.update_location import UpdateLocation
 from app.models.request_models.create_location import CreateLocation
@@ -53,6 +53,3 @@ async def get_nearest_location(latitude: float, longitude: float, locations_serv
     if nearest_location is None:
         raise HTTPException(status_code=404, detail="No locations available")
     return nearest_location.to_dict()
-
-
-
