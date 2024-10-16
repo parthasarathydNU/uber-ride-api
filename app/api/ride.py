@@ -1,5 +1,4 @@
 # app/ride.py
-
 from fastapi import APIRouter, HTTPException
 
 from app.models.Customer import Customer
@@ -8,8 +7,7 @@ from app.models.GeoUtility import GeoUtility
 from app.models.RideManager import RideManager
 from app.models.request_models.booking_request import BookingRequest
 
-
-router = APIRouter()
+router = APIRouter(prefix="/ride")
 
 ride_manager = RideManager()
 driver1= Driver("Rohit Sharma", True, (42.3601, -71.0589))
@@ -21,10 +19,6 @@ ride_manager.driverManager.addDriver(driver1)
 ride_manager.driverManager.addDriver(driver2)
 ride_manager.driverManager.addDriver(driver3)
 
-@router.get("/ride")
-async def initializeRide():
-    """Get all locations"""
-    return {"message": "Welcome to Uber"}
 
 @router.post("/book-ride")
 def book_ride(booking_request: BookingRequest):

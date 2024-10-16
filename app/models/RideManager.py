@@ -25,8 +25,7 @@ class RideManager:
         available_near_driver = self.driverManager.getClosestDriver(source)
         tariff_for_the_ride = self.calculateTariff(source, destination)
         new_booking = Ride(customer, available_near_driver, tariff_for_the_ride, source, destination)
-        available_near_driver.isAvailable = False
-        self.driverManager.updateDriverAvailability(available_near_driver.driverId,available_near_driver.isAvailable )
+        self.driverManager.updateDriverAvailability(available_near_driver.driverId,False )
         new_booking.price = tariff_for_the_ride
         new_booking.distance = self.getDistance(source, destination)
         self.book_Details[new_booking.rideId] = new_booking
